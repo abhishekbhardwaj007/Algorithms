@@ -1,3 +1,5 @@
+import javax.swing.text.html.HTMLDocument.HTMLReader.IsindexAction;
+
 
 public class Percolation {
 
@@ -10,15 +12,6 @@ public class Percolation {
 	private static final int BLOCKED = 0;
 	private static final int OPEN    = 1;
 
-	/*public void UnitTest()
-	{
-		Percolation p = new Percolation(10);
-		p.open(1, 1);
-		p.open(1, 2);
-		
-		System.out.println(p.uf.connected(xyto1D(1, 1), xyto1D(1, 2)));	
-	}*/
-	
 	private boolean IsSiteOutOfBounds(int i, int j)
 	{
 		if ((i < 1) || (i > N))
@@ -39,7 +32,7 @@ public class Percolation {
 		// Check if indice is legal
 		if (IsSiteOutOfBounds(i, j))
 		{
-			throw new  java.lang.IndexOutOfBoundsException();
+			throw new java.lang.IndexOutOfBoundsException();
 		}
 	}
 
@@ -55,10 +48,42 @@ public class Percolation {
 			if ((Grid[x][y] == OPEN) && (!uf.connected(xyto1D(i, j), xyto1D(x, y))))
 			{
 				uf.union(xyto1D(i, j), xyto1D(x, y));
+				
+				if (x == N)
+				{
+					LastRowUnion(x, y);
+				}
 			}
 		}
 	}
-
+	
+	private boolean IsValidAndFull(int i, int j)
+	{
+		if (IsSiteOutOfBounds(i, j))
+		{
+			return false;
+		}
+		else
+		{
+			if (isFull(i, j))
+			{
+				return true;
+			}
+			else
+			{
+				return false;
+			}
+		}
+	}
+	
+	private void LastRowUnion(int i, int j)
+	{
+		if ((IsValidAndFull(i-1, j)) || (IsValidAndFull(i, j - 1)) || (IsValidAndFull(i, j + 1)))
+		{
+			uf.union(xyto1D(i, j), VirtualBottom);
+		}
+	}
+	
 	private void UnionAllNeighbours(int i, int j)
 	{
 		// If the point is in the first row then union with VirtualTop
@@ -70,8 +95,8 @@ public class Percolation {
 		// If the point is in the bottom row then union with VirtualBottom
 		if (i == N)
 		{
-			uf.union(xyto1D(i, j), VirtualBottom);
-		}
+			LastRowUnion(i, j);
+		} 
 
 		// Union with all neighbours
 
@@ -155,11 +180,5 @@ public class Percolation {
 	{
 		return uf.connected(VirtualTop, VirtualBottom);
 	}
-	
-	/*public static void main(String[] args)
-	{
-		// Empty for now
-	}*/
-	
 
 }
