@@ -51,12 +51,6 @@ public class Percolation {
 				{
 					uf.union(xyto1D(i, j), xyto1D(x, y));	
 				}
-				
-				if (x == N)
-				{
-					// uf.union(xyto1D(x, y), VirtualBottom);
-					LastRowUnion(x, y);
-				}
 			}
 		}
 	}
@@ -79,7 +73,7 @@ public class Percolation {
 			}
 		}
 	}
-	
+
 	private void LastRowUnion(int i, int j)
 	{
 		if ((IsValidAndFull(i-1, j)) || (IsValidAndFull(i, j - 1)) || (IsValidAndFull(i, j + 1)) || (this.N == 1))
@@ -94,18 +88,13 @@ public class Percolation {
 		if (i == 1)
 		{
 			uf.union(xyto1D(i, j), VirtualTop);
-			
-			if (this.N == 1)
-			{
-				uf.union(xyto1D(i, j), VirtualBottom);
-			}
 		}
 
 		// If the point is in the bottom row then union with VirtualBottom
-	/*	if (i == this.N)
+		if (i == this.N)
 		{
-			LastRowUnion(i, j);
-		} */
+			uf.union(xyto1D(i, j), VirtualBottom);
+		} 
 
 		// Union with all neighbours
 
