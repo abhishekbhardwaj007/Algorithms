@@ -41,13 +41,22 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
 		if (this.N <= 0) {
 			throw new java.util.NoSuchElementException();
 		}
-
-		Item item = it[--this.N];
-
+		
+		int index = StdRandom.uniform(this.N);
+		Item item = it[index];
+		
+		copydequeue(index);
+		
+		//
+		// Updating elements
+		//
+		this.N--;
+		
 		//
 		// To prevent loitering
 		//
 		it[this.N] = null;
+		
 
 		if ((this.N > 0) && (this.N == (this.Len / 4))) {
 			copy(this.Len / 2);
@@ -78,20 +87,36 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
 		it = newitem;
 	}
 
+	private void copydequeue(int startindex) {
+
+		for(int i = startindex; i < (this.N - 1); i++) {
+			it[i] = it[i + 1];
+		}
+	}
+	
 	public Iterator<Item> iterator() {
 		return new RandomizedQueueIterator();
 	}
 
 	private class RandomizedQueueIterator implements Iterator<Item> {
-
-		int currentIndex;
-
+		
+		boolean[] indices;
+		int totaltraversed;
+		
 		public RandomizedQueueIterator() {
-			this.currentIndex = 0;
+			
+			indices = new boolean[N];
+			
+			for (int i = 0; i < N; i++)
+			{
+				this.indices[i] = false;
+			}
+			
+			this.totaltraversed = 0;
 		}
 
 		public boolean hasNext() {
-			return (this.currentIndex < N);
+			return (this.totaltraversed < N);
 		}
 
 		public void remove() {
@@ -100,40 +125,39 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
 
 		public Item next() {
 
-			if ((currentIndex < 0) || (currentIndex >= N))
+			if (this.totaltraversed >= N)
 			{
 				throw new java.util.NoSuchElementException();
 			}
-
-			Item item = it[currentIndex];
-
-			currentIndex++;
+			
+			Item item;
+			int index;
+			
+			do
+			{
+				index = StdRandom.uniform(N);
+				
+			} while(indices[index] == true);
+			
+			indices[index] = true;
+			item = it[index];
+			
+			totaltraversed++;
 
 			return item;
 		}
 	}
 
+	/*
 	public static void main(String[] Args)
 	{
 		RandomizedQueue<Integer> rq = new RandomizedQueue<Integer>();
 
-		for (int i = 0 ; i < 100; i++)
+		for (int i = 0 ; i < 5; i++)
 		{
 			rq.enqueue(i);
 		}
-
-
-		for (int i = 0 ; i < 100; i++)
-		{
-			System.out.println(rq.dequeue());
-		}
-
-		System.out.println(rq.isEmpty());
-
-		rq.enqueue(1);
-		rq.enqueue(2);
-		System.out.println(rq.dequeue());
-
+		
 		Iterator<Integer> it = rq.iterator();
 
 		while(it.hasNext())
@@ -141,7 +165,7 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
 			System.out.println(it.next());
 		}
 
-	}
+	} */
 
 
 }
