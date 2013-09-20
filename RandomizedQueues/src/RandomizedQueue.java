@@ -45,7 +45,7 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
 		int index = StdRandom.uniform(this.N);
 		Item item = it[index];
 		
-		copydequeue(index);
+		it[index] = it[this.N - 1];
 		
 		//
 		// Updating elements
@@ -85,15 +85,9 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
 		}
 
 		it = newitem;
+		newitem = null;
 	}
 
-	private void copydequeue(int startindex) {
-
-		for(int i = startindex; i < (this.N - 1); i++) {
-			it[i] = it[i + 1];
-		}
-	}
-	
 	public Iterator<Item> iterator() {
 		return new RandomizedQueueIterator();
 	}
@@ -148,7 +142,7 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
 		}
 	}
 
-	/*
+	
 	public static void main(String[] Args)
 	{
 		RandomizedQueue<Integer> rq = new RandomizedQueue<Integer>();
@@ -163,9 +157,9 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
 		while(it.hasNext())
 		{
 			System.out.println(it.next());
-		}
+		} 
 
-	} */
+	} 
 
 
 }
