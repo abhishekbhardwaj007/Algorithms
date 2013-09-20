@@ -143,7 +143,7 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
 	}
 
 	
-	public static void main(String[] Args)
+/*	public static void main(String[] Args)
 	{
 		RandomizedQueue<Integer> rq = new RandomizedQueue<Integer>();
 
@@ -159,7 +159,7 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
 			System.out.println(it.next());
 		} 
 
-	} 
+	} */
 
 
 }
