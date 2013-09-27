@@ -15,7 +15,7 @@ import java.util.Comparator;
 public class Point implements Comparable<Point> {
 
     // compare points by slope
-    public final Comparator<Point> SLOPE_ORDER = null;       // YOUR DEFINITION HERE
+    public final Comparator<Point> SLOPE_ORDER = new SlopeOrder();       // YOUR DEFINITION HERE
 
     private final int x;                              // x coordinate
     private final int y;                              // y coordinate
@@ -26,6 +26,10 @@ public class Point implements Comparable<Point> {
         this.x = x;
         this.y = y;
     }
+    
+	private static double abs(double a) {
+		return (a <= 0.0) ? 0.0 - a : a;
+	}
 
     // plot this point to standard drawing
     public void draw() {
@@ -60,10 +64,55 @@ public class Point implements Comparable<Point> {
     	return ((double)(this.y - that.y) / (this.x - that.x));
     }
 
+    private class SlopeOrder implements Comparator<Point> {
+    	
+    	public int compare(Point v, Point w) {
+    		
+    		if ((v == null) || (w == null)) {
+    			throw new java.lang.NullPointerException();
+    		}
+    		
+    		double sV = Point.this.slopeTo(v);
+    		double sW = Point.this.slopeTo(w);
+    		
+    		if ((sV == Double.NEGATIVE_INFINITY) && (sW == Double.NEGATIVE_INFINITY)) {
+    			return 0;
+    		}
+    		
+    		if ((sV == Double.POSITIVE_INFINITY) && (sW == Double.POSITIVE_INFINITY)) {
+    			return 0;
+    		}
+    		
+    		if ((sV == 0.0) && (sW == 0.0)) {
+    			return 0;
+    		}
+    		
+    		if (abs(sV - sW) <= 0.000001) {
+    			return 0;
+    		}
+    		
+    		if (sV < sW) {
+    			return -1;
+    		}
+    		
+    		if (sV > sW) {
+    			return 1;
+    		}
+    		
+    		return 0;
+    	}
+    }
+    
+    
     // is this point lexicographically smaller than that one?
     // comparing y-coordinates and breaking ties by x-coordinates
     public int compareTo(Point that) {
         
+    	if (that == null)
+    	{
+    		throw new java.lang.NullPointerException();
+    	}
+    	
     	// less than case
     	if (this.y < that.y) {
     		return -1;
