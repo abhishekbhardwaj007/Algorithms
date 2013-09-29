@@ -26,7 +26,7 @@ public class Fast {
 			}
 		}
 
-		if (((end - start) >= 3) && (P.compareTo(Copy[start]) == -1))
+		if (((end - start) >= 3) && (P.compareTo(Copy[start]) < 0))
 		{
 			System.out.print(P);
 
