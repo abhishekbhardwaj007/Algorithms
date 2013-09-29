@@ -1,16 +1,14 @@
 import java.util.Arrays;
 
-import javax.print.attribute.standard.Finishings;
-
 
 public class Fast {
 
-	private static int FindFirstZeroIndex(Point Ref, Point[] PointArray) {
+	private static int FindFirstSlopeIndex(Point Ref, Point[] PointArray, double Slope) {
 		
 		int First = -1;
 		for (int i = 0; i < PointArray.length; i++)
 		{
-			if (Ref.slopeTo(PointArray[i]) == 0) {
+			if (Ref.slopeTo(PointArray[i]) == Slope) {
 				First = i;
 				break;
 			}
@@ -19,15 +17,18 @@ public class Fast {
 		return First;
 	}
 	
-	private static int FindLastZeroIndex(int First, Point Ref, Point[] PointArray) {
+	private static int FindLastSlopeIndex(int First, Point Ref, Point[] PointArray, double Slope) {
 		
-		int Last = 0;
+		int Last = First;
+		
 		for (int i = First + 1; i < PointArray.length; i++)
 		{
-			if (Ref.slopeTo(PointArray[i]) != 0) {
+			if (Ref.slopeTo(PointArray[i]) != Slope) {
 				Last = i - 1;
 				break;
 			}
+			
+			Last = i;
 		}
 		
 		return Last;
@@ -49,6 +50,7 @@ public class Fast {
 
 		Point[] PointArray = new Point[N];
 		Point[] Copy = new Point[N];
+		boolean[] processed = new boolean[N];
 		int index = 0;
 
 		for (int m = 1; m < A.length; m += 2) {
@@ -69,7 +71,6 @@ public class Fast {
 			
 			Arrays.sort(Copy, P.SLOPE_ORDER);
 			
-			System.out.println(P);
 			
 			/*
 			for (j = 0; j < Copy.length; j++) {
@@ -79,11 +80,11 @@ public class Fast {
 			*/
 			
 			
-			First = FindFirstZeroIndex(P, Copy);
+			First = FindFirstSlopeIndex(P, Copy, 0);
 			
 			if (First != -1)
 			{
-				Last = FindLastZeroIndex(First, P, Copy);
+				Last = FindLastSlopeIndex(First, P, Copy, 0);
 				
 				System.out.print(P);
 				
@@ -93,6 +94,22 @@ public class Fast {
 				}
 				
 
+				System.out.println("");
+			}
+			
+			First = FindFirstSlopeIndex(P, Copy, Double.POSITIVE_INFINITY);
+			
+			if (First != -1)
+			{
+				Last = FindLastSlopeIndex(First, P, Copy, Double.POSITIVE_INFINITY);
+				
+				System.out.print(P);
+				
+				for (j = First ; j <= Last; j++)
+				{
+					System.out.print(" -> " + Copy[j]);
+				}
+				
 				System.out.println("");
 			}
 			
