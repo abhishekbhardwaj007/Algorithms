@@ -43,11 +43,12 @@ public class Fast {
 			P.drawTo(Copy[end - 1]);
 			
 			// Indice to search from next
-			return end;
+			//return end;
 		}
 		
 		// No segment found
-		return start;
+		// return start;
+		return (end - 1);
 	}
 
 	private static void PrintArray(Point[] PointArray)
