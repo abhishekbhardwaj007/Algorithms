@@ -41,6 +41,8 @@ public class Board {
 
 		this.N = blocks.length;
 
+		this.blocks = new int[N][N];
+		
 		for (int i = 0; i < blocks.length; i++)
 		{
 			for(int j = 0; j < blocks.length; j++)
@@ -255,24 +257,36 @@ public class Board {
 	// Just for unit testing;
 	public static void main(String[] Args) {
 		
-		int N = 4;
+		int[][] Array = { {0, 1, 3}, {4, 2, 5}, {7, 8, 6} };
+		int[][] GoalArray = { {1, 2, 3}, {4, 5, 6}, {7, 8, 0} };
 		
+		Board B = new Board(Array);
+		Board GB = new Board(GoalArray);
+		 
 		// Test Dimension
+		System.out.println("Dimension" + " " + B.dimension());
 		
 		// Test To String
+		System.out.println("Board B " + B);
 		
 		// Test Twins
+		System.out.println("Board B twin " + B.twin());
 		
 		// Test equals
+		System.out.println(GB.equals(B));
+		System.out.println(GB.equals(GB));
 		
 		// Test Neighbours
+		Iterable<Board> It = B.neighbors();
+		
+		for (Board b: It) {
+			System.out.println("Iterator " + b);
+		}
+		
 		
 		// Test isGoal()
-		
-		// Test isLegal
-		
-		// Test Neighbours
-		
+		System.out.println(GB.equals(B));
+		System.out.println(GB.equals(GB));
 		
 	}
 
