@@ -3,8 +3,6 @@ public class Board {
 
 	private int N;
 	private int[][] blocks;
-	private Board parent;
-	private int moves;
 	private int RowOfZero;
 	private int ColOfZero;
 	private Queue<Board> Q;
@@ -57,11 +55,6 @@ public class Board {
 			}
 		}
 
-		this.moves = 0;
-
-		// Point to itself
-		this.parent = this;
-		
 		// Init Q for neighbors
 		Q = new Queue<Board>();
 	}
@@ -87,17 +80,12 @@ public class Board {
 		}
 
 		// Last Row
-		for (int j = 0; j < N; j++) {
+		for (int j = 0; j < (N - 1); j++) {
 
 			if (blocks[N - 1][j] != (((N - 1) * N) + j + 1)){
 				hamming++;
 			}
 
-		}
-
-		// Last element
-		if (blocks[N - 1][N - 1] != 0) {
-			hamming++;
 		}
 
 		return hamming;
@@ -108,22 +96,20 @@ public class Board {
 
 		int manhattan = 0;
 
-		for (int i = 0; i < (N - 1); i++)
+		for (int i = 0; i < N; i++)
 		{
 			for (int j = 0; j < N; j++) {
-
-				manhattan += abs(blocks[i][j] - ((i * N) + j + 1));
+				
+				if ((blocks[i][j] != ((i * N) + j + 1)) && (blocks[i][j] != 0)){
+					
+					int Num = blocks[i][j] - 1;
+					int Row = Num / N;
+					int Col = Num % N;
+					
+					manhattan += abs(Row - i) + abs(Col - j);
+				}
 			}
 		}
-
-		// Last Row
-		for (int j = 0; j < N; j++) {
-
-			manhattan += abs(blocks[N - 1][j] - (((N - 1) * N) + j + 1));
-		}
-
-		// Last element
-		manhattan += abs(blocks[N - 1][N - 1] - 0);
 
 		return manhattan;
 	}
@@ -178,8 +164,20 @@ public class Board {
 		if (y.getClass() != this.getClass()) return false;
 
 		Board that = (Board) y;
-
-		return (this.moves == that.moves) && (this.hamming() == that.hamming()) && (this.manhattan() == that.manhattan());
+		
+		if (dimension() != that.dimension())
+			return false;
+		
+		for (int i = 0; i < N; i++)
+		{
+			for (int j = 0; j < N; j++) {
+				
+				if (this.blocks[i][j] != that.blocks[i][j])
+					return false;
+			}
+		}
+		
+		return true;
 	}
 
 	// all neighboring boards
@@ -195,10 +193,7 @@ public class Board {
 		if (isLegal(RowOfZero - 1, ColOfZero)) {
 			B = new Board(this.blocks);
 			swap(B, RowOfZero, ColOfZero, RowOfZero - 1, ColOfZero);
-			
-			B.parent = this;
-			B.moves  += (this.moves + 1);
-			
+						
 			Q.enqueue(B);
 		}
 		
@@ -206,9 +201,6 @@ public class Board {
 		if (isLegal(RowOfZero + 1, ColOfZero)) {
 			B = new Board(this.blocks);
 			swap(B, RowOfZero, ColOfZero, RowOfZero + 1, ColOfZero);
-			
-			B.parent = this;
-			B.moves  += (this.moves + 1);
 			
 			Q.enqueue(B);
 		}
@@ -218,9 +210,6 @@ public class Board {
 			B = new Board(this.blocks);
 			swap(B, RowOfZero, ColOfZero, RowOfZero, ColOfZero - 1);
 			
-			B.parent = this;
-			B.moves  += (this.moves + 1);
-			
 			Q.enqueue(B);
 		}
 		
@@ -228,9 +217,6 @@ public class Board {
 		if (isLegal(RowOfZero, ColOfZero + 1)) {
 			B = new Board(this.blocks);
 			swap(B, RowOfZero, ColOfZero, RowOfZero, ColOfZero + 1);
-			
-			B.parent = this;
-			B.moves  += (this.moves + 1);
 			
 			Q.enqueue(B);
 		}
@@ -257,7 +243,7 @@ public class Board {
 	// Just for unit testing;
 	public static void main(String[] Args) {
 		
-		int[][] Array = { {0, 1, 3}, {4, 2, 5}, {7, 8, 6} };
+		int[][] Array = { {8, 1, 3}, {4, 0, 2}, {7, 6, 5} };
 		int[][] GoalArray = { {1, 2, 3}, {4, 5, 6}, {7, 8, 0} };
 		
 		Board B = new Board(Array);
@@ -275,6 +261,13 @@ public class Board {
 		// Test equals
 		System.out.println(GB.equals(B));
 		System.out.println(GB.equals(GB));
+		
+		// Test Hamming
+		System.out.println("Hamming  " + B.hamming());
+		
+		// Test Manhattan
+		System.out.println("Manhattan  " + B.manhattan());
+		
 		
 		// Test Neighbours
 		Iterable<Board> It = B.neighbors();
