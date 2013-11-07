@@ -33,13 +33,16 @@ public class KdTree {
 
 	// add the point p to the set (if it is not already in the set)
 	public void insert(Point2D p)    {
-		Root = insert(Root, p, 0);
+		Root = insert(Root, new RectHV(0.0, 0.0, 1.0, 1.0), p, 0);
 	}
 
-	private Node insert(Node TreeRoot, Point2D PointToInsert, int level) {
+	private Node insert(Node TreeRoot, RectHV ParentRect, Point2D PointToInsert, int level) {
 
 		if (TreeRoot == null) {
-			return new Node(PointToInsert, null);
+			RectHV rect = findChildRect(PointToInsert, ParentRect, level);
+			Node n = new Node(PointToInsert, rect);
+			System.out.println(n.rect);
+			return n;
 		}
 
 		int compare;
@@ -53,10 +56,10 @@ public class KdTree {
 		}
 
 		if (compare < 0) {
-			TreeRoot.lb = insert(TreeRoot.lb, PointToInsert, level + 1);
+			TreeRoot.lb = insert(TreeRoot.lb, TreeRoot.rect, PointToInsert, level + 1);
 		}
 		else if (compare > 0) {
-			TreeRoot.rt = insert(TreeRoot.rt, PointToInsert, level + 1);
+			TreeRoot.rt = insert(TreeRoot.rt, TreeRoot.rect, PointToInsert, level + 1);
 		}
 		else if (compare == 0) {
 			return TreeRoot;
@@ -64,7 +67,17 @@ public class KdTree {
 
 		return TreeRoot;
 	}
-
+	
+	private RectHV findChildRect(Point2D Point, RectHV ParentRectHV, int level) {
+		
+		if (level % 2 == 0) {
+			return new RectHV(ParentRectHV.xmin(), ParentRectHV.ymin(), Point.x(), ParentRectHV.ymax());
+		}
+		else {
+			return new RectHV(ParentRectHV.xmin(), Point.y(), ParentRectHV.xmax(), ParentRectHV.ymax());
+		}
+	}
+	
 	// does the set contain the point p?
 	public boolean contains(Point2D p)   {
 		return (get(p) != null);
