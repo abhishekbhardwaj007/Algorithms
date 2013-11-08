@@ -59,13 +59,10 @@ public class KdTree {
 		if (compare < 0) {
 			TreeRoot.lb = insert(TreeRoot.lb, TreeRoot.rect, PointToInsert, level + 1, true);
 		}
-		else if (compare > 0) {
+		else if (compare >= 0) {
 			TreeRoot.rt = insert(TreeRoot.rt, TreeRoot.rect, PointToInsert, level + 1, false);
 		}
-		else if (compare == 0) {
-			return TreeRoot;
-		}
-
+		
 		return TreeRoot;
 	}
 
@@ -169,6 +166,7 @@ public class KdTree {
 	/*
 	public static void main(String[] Args) {
 
+		
 		KdTree Kd = new KdTree();
 
 		Point2D P = new Point2D(0.7, 0.2);
@@ -195,6 +193,59 @@ public class KdTree {
 		System.out.println(Kd.size());
 		
 		Kd.draw();
+		
+		
+		KdTree Kd = new KdTree();
+
+		Point2D P = new Point2D(0.206107 , 0.095492);
+		Kd.insert(P);
+		System.out.println(Kd.contains(P));
+
+		P = new Point2D(0.975528, 0.654508);
+		Kd.insert(P);
+		System.out.println(Kd.contains(P));
+
+		P = new Point2D(0.024472 , 0.345492);
+		Kd.insert(P);
+		System.out.println(Kd.contains(P));
+
+		
+		P = new Point2D(0.793893,  0.095492);
+		Kd.insert(P);
+		System.out.println(Kd.contains(P));
+
+		P = new Point2D(0.793893 , 0.904508);
+		Kd.insert(P);
+		System.out.println(Kd.contains(P));
+		
+
+		P = new Point2D(0.975528 , 0.345492);
+		Kd.insert(P);
+		System.out.println(Kd.contains(P));
+
+		
+		P = new Point2D(0.206107 , 0.904508);
+		Kd.insert(P);
+		System.out.println(Kd.contains(P));
+
+		P = new Point2D(0.500000 , 0.000000);
+		Kd.insert(P);
+		System.out.println(Kd.contains(P));
+		
+		P = new Point2D(0.024472 , 0.654508);
+		Kd.insert(P);
+		System.out.println(Kd.contains(P));
+		
+		P = new Point2D(0.500000 , 1.000000);
+		Kd.insert(P);
+		System.out.println(Kd.contains(P));
+		
+		System.out.println(Kd.size());
+		
+		Kd.draw();
+		
+		
+		
 	}
 	*/
 	
