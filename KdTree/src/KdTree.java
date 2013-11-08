@@ -41,7 +41,7 @@ public class KdTree {
 		if (TreeRoot == null) {
 			RectHV rect = findChildRect(PointToInsert, ParentRect, level, isLeftChild);
 			Node n = new Node(PointToInsert, rect);
-			System.out.println(n.rect);
+			// System.out.println(n.rect);
 			N++;
 			return n;
 		}
@@ -71,7 +71,7 @@ public class KdTree {
 
 	private RectHV findChildRect(Point2D Point, RectHV ParentRectHV, int level, boolean isLeftChild) {
 
-		System.out.println("Parent Rect  " + ParentRectHV);
+		//System.out.println("Parent Rect  " + ParentRectHV);
 		if (level % 2 == 0) {
 
 			if (isLeftChild) {
@@ -79,17 +79,17 @@ public class KdTree {
 				return new RectHV(ParentRectHV.xmin(), ParentRectHV.ymin(), Point.x(), ParentRectHV.ymax());
 			}
 			else {
-				return new RectHV(0.0, 0.0, Point.x(), ParentRectHV.ymin());
+				return new RectHV(ParentRectHV.xmin(), ParentRectHV.ymax(), Point.x(), 1.0);
 			}
 		}
 		else {
 			if (isLeftChild) {
 
-				return new RectHV(ParentRectHV.xmin(), Point.y(), ParentRectHV.xmax(), ParentRectHV.ymax());
+				return new RectHV(ParentRectHV.xmin(), ParentRectHV.ymin(), ParentRectHV.xmax(), Point.y());
 			}
 			else {
 				
-				return new RectHV(ParentRectHV.xmax(), Point.y(), 1.0, 1.0);
+				return new RectHV(ParentRectHV.xmax(), ParentRectHV.ymin(), 1.0, Point.y());
 			}
 		}
 	}
@@ -139,18 +139,18 @@ public class KdTree {
 		draw(n.lb, level + 1);
 		
 		// root
-		System.out.println("Drawing " + n.p + " " + n.rect);
+		//System.out.println("Drawing " + n.p + " " + n.rect);
 		if (level % 2 == 0) {
 			StdDraw.setPenColor(StdDraw.RED);
 			StdDraw.setPenRadius();
-			System.out.println("Drawing Line " + n.rect.xmax() + " " + n.rect.ymin() + " " + n.rect.xmax() + " " + n.rect.ymax());
+			//System.out.println("Drawing Line " + n.rect.xmax() + " " + n.rect.ymin() + " " + n.rect.xmax() + " " + n.rect.ymax());
 			StdDraw.line(n.rect.xmax(), n.rect.ymin(), n.rect.xmax(), n.rect.ymax());
 		}
 		else {
 			StdDraw.setPenColor(StdDraw.BLUE);
 			StdDraw.setPenRadius();
-			System.out.println("Drawing Line " + n.rect.xmin() + " " + n.rect.ymin() + " " + n.rect.xmax() + " " + n.rect.ymin());
-			StdDraw.line(n.rect.xmin(), n.rect.ymin(), n.rect.xmax(), n.rect.ymin());
+			//System.out.println("Drawing Line " + n.rect.xmin() + " " + n.rect.ymax() + " " + n.rect.xmax() + " " + n.rect.ymax());
+			StdDraw.line(n.rect.xmin(), n.rect.ymax(), n.rect.xmax(), n.rect.ymax());
 		}
 		
 		// right tree
@@ -166,6 +166,7 @@ public class KdTree {
 		return null;
 	}
 
+	/*
 	public static void main(String[] Args) {
 
 		KdTree Kd = new KdTree();
@@ -182,7 +183,7 @@ public class KdTree {
 		Kd.insert(P);
 		System.out.println(Kd.contains(P));
 
-		/*
+		
 		P = new Point2D(0.4, 0.7);
 		Kd.insert(P);
 		System.out.println(Kd.contains(P));
@@ -192,9 +193,9 @@ public class KdTree {
 		System.out.println(Kd.contains(P));
 		
 		System.out.println(Kd.size());
-		*/
 		
 		Kd.draw();
 	}
+	*/
 	
 }
