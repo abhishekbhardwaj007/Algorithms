@@ -42,6 +42,7 @@ public class KdTree {
 			RectHV rect = findChildRect(PointToInsert, ParentRect, level, isLeftChild);
 			Node n = new Node(PointToInsert, rect);
 			System.out.println(n.rect);
+			N++;
 			return n;
 		}
 
@@ -70,6 +71,7 @@ public class KdTree {
 
 	private RectHV findChildRect(Point2D Point, RectHV ParentRectHV, int level, boolean isLeftChild) {
 
+		System.out.println("Parent Rect  " + ParentRectHV);
 		if (level % 2 == 0) {
 
 			if (isLeftChild) {
@@ -87,7 +89,7 @@ public class KdTree {
 			}
 			else {
 				
-				return new RectHV(Point.x(), Point.y(), 1.0, 1.0);
+				return new RectHV(ParentRectHV.xmax(), Point.y(), 1.0, 1.0);
 			}
 		}
 	}
@@ -124,9 +126,36 @@ public class KdTree {
 
 	// draw all of the points to standard draw
 	public void draw()                  {
-
+		draw(Root, 0);
 	}
 
+	private void draw(Node n, int level) {
+		
+		if (n == null) {
+			return;
+		}
+		
+		// left tree
+		draw(n.lb, level + 1);
+		
+		// root
+		System.out.println("Drawing " + n.p + " " + n.rect);
+		if (level % 2 == 0) {
+			StdDraw.setPenColor(StdDraw.RED);
+			StdDraw.setPenRadius();
+			System.out.println("Drawing Line " + n.rect.xmax() + " " + n.rect.ymin() + " " + n.rect.xmax() + " " + n.rect.ymax());
+			StdDraw.line(n.rect.xmax(), n.rect.ymin(), n.rect.xmax(), n.rect.ymax());
+		}
+		else {
+			StdDraw.setPenColor(StdDraw.BLUE);
+			StdDraw.setPenRadius();
+			System.out.println("Drawing Line " + n.rect.xmin() + " " + n.rect.ymin() + " " + n.rect.xmax() + " " + n.rect.ymin());
+			StdDraw.line(n.rect.xmin(), n.rect.ymin(), n.rect.xmax(), n.rect.ymin());
+		}
+		
+		// right tree
+		draw(n.rt, level + 1);
+	}
 	// all points in the set that are inside the rectangle
 	public Iterable<Point2D> range(RectHV rect) {
 		return null;
@@ -153,6 +182,7 @@ public class KdTree {
 		Kd.insert(P);
 		System.out.println(Kd.contains(P));
 
+		/*
 		P = new Point2D(0.4, 0.7);
 		Kd.insert(P);
 		System.out.println(Kd.contains(P));
@@ -160,5 +190,11 @@ public class KdTree {
 		P = new Point2D(0.9, 0.6);
 		Kd.insert(P);
 		System.out.println(Kd.contains(P));
+		
+		System.out.println(Kd.size());
+		*/
+		
+		Kd.draw();
 	}
+	
 }
