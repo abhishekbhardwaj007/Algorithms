@@ -113,6 +113,8 @@ public class KdTree {
 	private Point2D get(Node TreeRoot, Point2D PointToGet, int level) {
 		if (TreeRoot == null) return null;
 
+		if (TreeRoot.p.equals(PointToGet)) return TreeRoot.p;
+		
 		int compare;
 
 		// Comparing x-coordinate if level is even and y if level is odd
@@ -125,9 +127,11 @@ public class KdTree {
 
 		if      (compare < 0) return get(TreeRoot.lb, PointToGet, level + 1);
 
-		else if (compare > 0) return get(TreeRoot.rt, PointToGet, level + 1);
+		else if (compare >= 0) return get(TreeRoot.rt, PointToGet, level + 1);
+		
+		// Should never reach here
+		else    return null;
 
-		else              return TreeRoot.p;
 	}
 
 	// draw all of the points to standard draw
