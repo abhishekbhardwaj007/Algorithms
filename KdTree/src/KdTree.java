@@ -62,7 +62,7 @@ public class KdTree {
 		else if (compare >= 0) {
 			TreeRoot.rt = insert(TreeRoot.rt, TreeRoot.rect, PointToInsert, level + 1, false);
 		}
-		
+
 		return TreeRoot;
 	}
 
@@ -85,7 +85,7 @@ public class KdTree {
 				return new RectHV(ParentRectHV.xmin(), ParentRectHV.ymin(), ParentRectHV.xmax(), Point.y());
 			}
 			else {
-				
+
 				return new RectHV(ParentRectHV.xmax(), ParentRectHV.ymin(), 1.0, Point.y());
 			}
 		}
@@ -127,14 +127,14 @@ public class KdTree {
 	}
 
 	private void draw(Node n, int level) {
-		
+
 		if (n == null) {
 			return;
 		}
-		
+
 		// left tree
 		draw(n.lb, level + 1);
-		
+
 		// root
 		//System.out.println("Drawing " + n.p + " " + n.rect);
 		if (level % 2 == 0) {
@@ -149,24 +149,123 @@ public class KdTree {
 			//System.out.println("Drawing Line " + n.rect.xmin() + " " + n.rect.ymax() + " " + n.rect.xmax() + " " + n.rect.ymax());
 			StdDraw.line(n.rect.xmin(), n.rect.ymax(), n.rect.xmax(), n.rect.ymax());
 		}
-		
+
 		// right tree
 		draw(n.rt, level + 1);
 	}
 	// all points in the set that are inside the rectangle
 	public Iterable<Point2D> range(RectHV rect) {
-		return null;
+
+		Stack<Point2D> Stack = new Stack<Point2D>();
+
+		if (Root == null) {
+			return Stack;
+		}
+
+		range(Root, rect, Stack);
+
+		return Stack;
+	}
+
+	private void range(Node n, RectHV rect, Stack<Point2D> st) {
+
+		if (n == null) {
+			return;
+		}
+
+		if (rect.intersects(n.rect)) {
+
+			if (rect.contains(n.p)) {
+				st.push(n.p);
+			}
+
+			// left tree
+			range(n.lb, rect, st);
+
+			// right tree
+			range(n.rt, rect, st);
+		}
 	}
 
 	// a nearest neighbor in the set to p; null if set is empty
 	public Point2D nearest(Point2D p)        {
-		return null;
+
+		// Initing variables that will keep state
+		double  MinDistance = Double.MAX_VALUE;
+
+		// In case no tree return null itself
+		if (Root == null) {
+			return null;
+		}
+
+		return nearest(p, Root, Root.p, MinDistance);
 	}
 
-	/*
+	private Point2D nearest(Point2D p, Node n, Point2D MinPoint, double MinDistance) {
+
+		Point2D MinPointLocal = MinPoint;
+
+		if (n == null) {
+			return MinPointLocal;
+		}
+
+
+		// only go in the root and its subtrees if rectangle distance is
+		// less than min
+		if (n.rect.distanceSquaredTo(p) < MinDistance) {
+
+			// If distance from current root is less than mindistance then update
+			// state			
+			double dist = p.distanceSquaredTo(n.p);
+
+			if (dist  < MinDistance) {
+				MinPointLocal = n.p;
+				MinDistance = dist;
+			}
+
+			//
+			// Go to first that tree whose root lies on same side of 
+			// splitting line (of current node) as the query point
+			//
+			if ((n.lb != null) && (n.rt != null)) {
+
+				if (n.rect.contains(p) == n.rect.contains(n.lb.p)) {
+
+					// This case corresponds to going first to left tree then right tree
+					MinPointLocal = nearest(p, n.lb, MinPointLocal, MinDistance);
+
+					MinPointLocal = nearest(p, n.rt, MinPointLocal, MinDistance);
+				}
+				else if  (n.rect.contains(p) == n.rect.contains(n.rt.p)) {
+
+					MinPointLocal = nearest(p, n.rt, MinPointLocal, MinDistance);
+
+					MinPointLocal = nearest(p, n.lb, MinPointLocal, MinDistance);
+
+				}
+				else {
+					assert false;
+				}
+			}
+			else if (n.lb == null) {
+				MinPointLocal = nearest(p, n.rt, MinPointLocal, MinDistance);
+			}
+			else if (n.rt == null) {
+				MinPointLocal = nearest(p, n.lb, MinPointLocal, MinDistance);
+			}
+			else {
+				assert false;
+			}
+
+		}
+
+		return MinPointLocal;
+	}
+
+	
 	public static void main(String[] Args) {
 
-		
+        /*
 		KdTree Kd = new KdTree();
 
 		Point2D P = new Point2D(0.7, 0.2);
@@ -181,7 +280,7 @@ public class KdTree {
 		Kd.insert(P);
 		System.out.println(Kd.contains(P));
 
-		
+
 		P = new Point2D(0.4, 0.7);
 		Kd.insert(P);
 		System.out.println(Kd.contains(P));
@@ -189,11 +288,21 @@ public class KdTree {
 		P = new Point2D(0.9, 0.6);
 		Kd.insert(P);
 		System.out.println(Kd.contains(P));
-		
+
 		System.out.println(Kd.size());
-		
+
 		Kd.draw();
-		
+
+		RectHV rect = new RectHV(0.0, 0.0, 0.5, 0.5);
+
+		Iterable<Point2D> it = Kd.range(rect);
+
+		for(Point2D p : it) {
+			System.out.println(p);
+		}
+
+		System.out.println("Nearest neighbour : " + Kd.nearest(new Point2D(0.2, 0.3)));	
+		*/
 		
 		KdTree Kd = new KdTree();
 
@@ -209,7 +318,7 @@ public class KdTree {
 		Kd.insert(P);
 		System.out.println(Kd.contains(P));
 
-		
+
 		P = new Point2D(0.793893,  0.095492);
 		Kd.insert(P);
 		System.out.println(Kd.contains(P));
@@ -217,13 +326,13 @@ public class KdTree {
 		P = new Point2D(0.793893 , 0.904508);
 		Kd.insert(P);
 		System.out.println(Kd.contains(P));
-		
+
 
 		P = new Point2D(0.975528 , 0.345492);
 		Kd.insert(P);
 		System.out.println(Kd.contains(P));
 
-		
+
 		P = new Point2D(0.206107 , 0.904508);
 		Kd.insert(P);
 		System.out.println(Kd.contains(P));
@@ -231,22 +340,30 @@ public class KdTree {
 		P = new Point2D(0.500000 , 0.000000);
 		Kd.insert(P);
 		System.out.println(Kd.contains(P));
-		
+
 		P = new Point2D(0.024472 , 0.654508);
 		Kd.insert(P);
 		System.out.println(Kd.contains(P));
-		
+
 		P = new Point2D(0.500000 , 1.000000);
 		Kd.insert(P);
 		System.out.println(Kd.contains(P));
-		
+
 		System.out.println(Kd.size());
-		
+
 		Kd.draw();
-		
-		
-		
+
+
+		RectHV rect = new RectHV(0.0, 0.0, 0.81, 0.3);
+
+		Iterable<Point2D> it = Kd.range(rect);
+
+		for(Point2D p : it) {
+			System.out.println(p);
+		}
+
+		System.out.println("Nearest neighbour : " + Kd.nearest(new Point2D(0.206107, 0.095492)));
 	}
-	*/
-	
+	 
+
 }
