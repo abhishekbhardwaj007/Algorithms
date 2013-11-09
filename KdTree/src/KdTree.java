@@ -59,8 +59,17 @@ public class KdTree {
 		if (compare < 0) {
 			TreeRoot.lb = insert(TreeRoot.lb, TreeRoot.rect, PointToInsert, level + 1, true);
 		}
-		else if (compare >= 0) {
+		else if (compare > 0) {
 			TreeRoot.rt = insert(TreeRoot.rt, TreeRoot.rect, PointToInsert, level + 1, false);
+		}
+		else if (compare == 0) {
+			
+			if (TreeRoot.p.equals(PointToInsert)) {
+				TreeRoot.p = PointToInsert;
+			}
+			else {
+				TreeRoot.rt = insert(TreeRoot.rt, TreeRoot.rect, PointToInsert, level + 1, false);
+			}
 		}
 
 		return TreeRoot;
