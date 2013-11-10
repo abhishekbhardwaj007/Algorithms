@@ -211,80 +211,81 @@ public class KdTree {
 			return null;
 		}
 
-		return nearest(p, Root, Root.p, MinDistance);
+		return nearest(p, Root, Root.p, MinDistance, 0);
 	}
 
-	private Point2D nearest(Point2D p, Node n, Point2D MinPoint, double MinDistance) {
+	private Point2D nearest(Point2D p, Node n, Point2D MinPoint, double MinDistance, int level) {
 
 		Point2D MinPointLocal = MinPoint;
 
 		if (n == null) {
 			return MinPointLocal;
 		}
-		
+
 		if (p.equals(n.p)) {
 			return n.p;
 		}
 
-		// only go in the root and its subtrees if rectangle distance is
-		// less than min
-		//	if (n.rect.distanceTo(p) < MinDistance) {
-
-		// If distance from current root is less than mindistance then update
-		// state			
 		double dist = p.distanceTo(n.p);
+		boolean isOnLeft = isPointInLeftTree(p, n, level);
 
-		if (dist  < MinDistance) {
+		if (dist <= MinDistance) {
 			MinPointLocal = n.p;
-			MinDistance = dist;
+			MinDistance   = dist;
 		}
 
-		//
-		// Go to first that tree whose root lies on same side of 
-		// splitting line (of current node) as the query point
-		//
 		if ((n.lb == null) && (n.rt == null)) {
 			return MinPointLocal;
 		}
-		else if ((n.lb != null) && (n.rt != null)) {
+		
+		if (isOnLeft) {
+			double dist2;
 
-		//	if (n.rect.contains(p) == n.rect.contains(n.lb.p)) {
-
-				// This case corresponds to going first to left tree then right tree
-				MinPointLocal = nearest(p, n.lb, MinPointLocal, MinDistance);
-
-				MinDistance = p.distanceTo(MinPointLocal);
-
-				MinPointLocal = nearest(p, n.rt, MinPointLocal, MinDistance);
-	//		}
-	/*		else if  (n.rect.contains(p) == n.rect.contains(n.rt.p)) {
-
-				MinPointLocal = nearest(p, n.rt, MinPointLocal, MinDistance);
-
-				MinDistance = p.distanceTo(MinPointLocal);
-
-				MinPointLocal = nearest(p, n.lb, MinPointLocal, MinDistance);
-
-			} */
-		/*	else {
-				assert false;
-			} */
-		}
-		else if (n.lb == null) {
-			MinPointLocal = nearest(p, n.rt, MinPointLocal, MinDistance);
-		}
-		else if (n.rt == null) {
-			MinPointLocal = nearest(p, n.lb, MinPointLocal, MinDistance);
+			MinPointLocal = nearest(p, n.lb, MinPointLocal, MinDistance, level + 1);
+			
+			MinDistance = p.distanceTo(MinPointLocal);
+			dist2       = n.rect.distanceTo(p);
+			
+			if (dist2 <= MinDistance) {
+				MinPointLocal = nearest(p, n.rt, MinPointLocal, MinDistance, level + 1);
+			}
 		}
 		else {
-			assert false;
-		}
+			double dist2;
 
-		//	}
+			MinPointLocal = nearest(p, n.rt, MinPointLocal, MinDistance, level + 1);
+			
+			MinDistance = p.distanceTo(MinPointLocal);
+			dist2       = n.rect.distanceTo(p);
+			
+			if (dist2 <= MinDistance) {
+				MinPointLocal = nearest(p, n.lb, MinPointLocal, MinDistance, level + 1);
+			}
+		}
 
 		return MinPointLocal;
 	}
 
+	private boolean isPointInLeftTree(Point2D p, Node n, int level) {
+
+		if (level % 2 == 0) {
+
+			if (p.x() < n.rect.xmax()) {
+				return true;
+			}
+			else {
+				return false;
+			}
+		}
+		else {
+			if (p.y() < n.rect.ymax()) {
+				return true;
+			}
+			else {
+				return false;
+			}	
+		}
+	}
 
 	public static void main(String[] Args) {
 
@@ -305,7 +306,7 @@ public class KdTree {
 
 
 		kdtree.draw();
-		System.out.println(kdtree.nearest(new Point2D(0.53, 0.76)));
+		System.out.println(kdtree.nearest(new Point2D(0.35, 0.29)));
 		/*
 		KdTree Kd = new KdTree();
 
