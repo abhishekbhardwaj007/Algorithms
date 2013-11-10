@@ -175,30 +175,82 @@ public class KdTree {
 			return Stack;
 		}
 
-		range(Root, rect, Stack);
+		range(Root, rect, Stack, 0);
 
 		return Stack;
 	}
 
-	private void range(Node n, RectHV rect, Stack<Point2D> st) {
+	private void range(Node n, RectHV rect, Stack<Point2D> st, int level) {
 
 		if (n == null) {
 			return;
 		}
+		
+		// Add point if it belongs to stack
+		if (rect.contains(n.p)) {
+			st.push(n.p);
+		}
+		
+		int i;
+		i = GoLeftOrRightOrBoth(rect, n, level);
+		
+		// Both
+		if (i == 2) {
+			range(n.lb, rect, st, level + 1);
+			range(n.rt, rect, st, level + 1);
+		}
+		else if (i == 0) { // left
+			range(n.lb, rect, st, level + 1);
+		}
+		else if (i == 1) { // right
+			range(n.rt, rect, st, level + 1);
+		}
+		
+	}
 
-		if (rect.intersects(n.rect)) {
-
-			if (rect.contains(n.p)) {
-				st.push(n.p);
+	//
+	// returns 0 if we have to go left
+	// returns 1 if we have to go right
+	// returns 2 if we should go both
+	//
+	private int GoLeftOrRightOrBoth(RectHV rect, Node n, int level) {
+		
+		if (level%2 == 0) {
+			
+			if ((n.p.x() >= rect.xmin()) && (rect.xmax() >= n.p.x())) {
+				return 2;
 			}
-
-			// left tree
-			range(n.lb, rect, st);
-
-			// right tree
-			range(n.rt, rect, st);
+			else if (n.p.x() > rect.xmax()) {
+				return 0;
+			}
+			else if (n.p.x() < rect.xmin()) {
+				return 1;
+			}
+			else {
+				assert false;
+			}
+			
+			return 2;
+		}
+		else {
+			
+			if ((n.p.y() >= rect.ymin()) && (rect.ymax() >= n.p.y())) {
+				return 2;
+			}
+			else if (n.p.y() > rect.ymax()) {
+				return 0;
+			}
+			else if (n.p.y() < rect.ymin()) {
+				return 1;
+			}
+			else {
+				assert false;
+			}
+			
+			return 2;
 		}
 	}
+	
 
 	// a nearest neighbor in the set to p; null if set is empty
 	public Point2D nearest(Point2D p)        {
